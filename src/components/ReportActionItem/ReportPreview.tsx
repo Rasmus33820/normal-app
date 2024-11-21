@@ -183,10 +183,13 @@ function ReportPreview({
         formattedMerchant = null;
     }
 
+    const isArchivedExpenseReport = ReportUtils.isArchivedExpenseReport(iouReport);
+    const isArchivedReport = ReportUtils.isArchivedRoomWithID(iouReportID);
     const currentUserAccountID = getCurrentUserAccountID();
     const isAdmin = policy?.role === CONST.POLICY.ROLE.ADMIN;
     const shouldShowSubmitButton =
         isOpenExpenseReport &&
+        !isArchivedExpenseReport &&
         reimbursableSpend !== 0 &&
         !showRTERViolationMessage &&
         !shouldShowBrokenConnectionViolation &&
@@ -379,7 +382,6 @@ function ReportPreview({
     const shouldShowPendingSubtitle = numberOfPendingRequests === 1 && numberOfRequests === 1;
 
     const isPayAtEndExpense = ReportUtils.isPayAtEndExpenseReport(iouReportID, allTransactions);
-    const isArchivedReport = ReportUtils.isArchivedRoomWithID(iouReportID);
     const [archiveReason] = useOnyx(`${ONYXKEYS.COLLECTION.REPORT_ACTIONS}${iouReportID}`, {selector: ReportUtils.getArchiveReason});
 
     const getPendingMessageProps: () => PendingMessageProps = () => {
