@@ -4357,6 +4357,14 @@ function exportReportToCSV({reportID, transactionIDList}: ExportReportCSVParams,
     fileDownload(ApiUtils.getCommandURL({command: WRITE_COMMANDS.EXPORT_REPORT_TO_CSV}), 'Expensify.csv', '', false, formData, CONST.NETWORK.METHOD.POST, onDownloadFailed);
 }
 
+function setDeleteTransactionNavigateBackUrl(url: string) {
+    Onyx.set(ONYXKEYS.NVP_DELETE_TRANSACTION_NAVIGATE_BACK_URL, url);
+}
+
+function clearDeleteTransactionNavigateBackUrl() {
+    Onyx.merge(ONYXKEYS.NVP_DELETE_TRANSACTION_NAVIGATE_BACK_URL, null);
+}
+
 export type {Video};
 
 export {
@@ -4446,4 +4454,6 @@ export {
     updateReportName,
     updateRoomVisibility,
     updateWriteCapability,
+    setDeleteTransactionNavigateBackUrl,
+    clearDeleteTransactionNavigateBackUrl,
 };
