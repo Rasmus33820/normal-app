@@ -189,7 +189,9 @@ import type {
     WelcomeNoteParams,
     WelcomeToRoomParams,
     WeSentYouMagicSignInLinkParams,
+    WorkspaceMemberList,
     WorkspaceOwnerWillNeedToAddOrUpdatePaymentCardParams,
+    WorkspaceYouMayJoin,
     YourPlanPriceParams,
     ZipCodeExampleFormatParams,
 } from './params';
@@ -346,6 +348,7 @@ const translations = {
         semicolon: 'el punto y coma',
         please: 'Por favor',
         rename: 'Renombrar',
+        skip: 'Saltarse',
         contactUs: 'contáctenos',
         pleaseEnterEmailOrPhoneNumber: 'Por favor, escribe un email o número de teléfono',
         fixTheErrors: 'corrige los errores',
@@ -1746,6 +1749,11 @@ const translations = {
         },
         getStarted: 'Comenzar',
         whatsYourName: '¿Cómo te llamas?',
+        peopleYouMayKnow: 'Las personas que tal vez conozcas ya están aquí. Verifica tu correo electrónico para unirte a ellos.',
+        workspaceMemberList: ({employeeCount, policyOwner}: WorkspaceMemberList) => `${employeeCount} miembro${employeeCount > 1 ? 's' : ''} • ${policyOwner}`,
+        workspaceYouMayJoin: ({domain, email}: WorkspaceYouMayJoin) => `Alguien de ${domain} ya ha creado un espacio de trabajo. Por favor, introduce el código mágico enviado a ${email}.`,
+        joinAWorkspace: 'Unirse a un espacio de trabajo',
+        listOfWorkspaces: 'Aquí está la lista de espacios de trabajo a los que puedes unirte. No te preocupes, siempre puedes unirte a ellos más tarde si lo prefieres.',
         whereYouWork: '¿Dónde trabajas?',
         errorSelection: 'Por favor selecciona una opción para continuar.',
         purpose: {
@@ -2760,6 +2768,10 @@ const translations = {
             },
             noAccountsFound: 'No se ha encontrado ninguna cuenta',
             noAccountsFoundDescription: 'Añade la cuenta en Quickbooks Online y sincroniza de nuevo la conexión.',
+        },
+        workspaceList: {
+            joinNow: 'Únete ahora',
+            askToJoin: 'Pedir unirse',
         },
         xero: {
             organization: 'Organización Xero',
