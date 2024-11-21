@@ -313,6 +313,7 @@ function SearchRouterList(
             sectionTitleStyles={styles.mhn2}
             shouldSingleExecuteRowSelect
             onArrowFocus={onArrowFocus}
+            shouldScrollToFocusedIndexOnFirstRender={false}
         />
     );
 }

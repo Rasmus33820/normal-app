@@ -19,6 +19,7 @@ import usePolicy from '@hooks/usePolicy';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as CardUtils from '@libs/CardUtils';
+import getPlatform from '@libs/getPlatform';
 import * as OptionsListUtils from '@libs/OptionsListUtils';
 import {getAllTaxRates} from '@libs/PolicyUtils';
 import type {OptionData} from '@libs/ReportUtils';
@@ -59,6 +60,9 @@ function SearchRouter({onRouterClose, shouldHideInputCaret}: SearchRouterProps) 
     const [isSearchingForReports] = useOnyx(ONYXKEYS.IS_SEARCHING_FOR_REPORTS, {initWithStoredValues: false});
     const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteItemData[] | undefined>([]);
     const [autocompleteSubstitutions, setAutocompleteSubstitutions] = useState<SubstitutionMap>({});
+
+    const isWeb = getPlatform() === CONST.PLATFORM.WEB;
+    const isDesktop = getPlatform() === CONST.PLATFORM.DESKTOP;
 
     const {shouldUseNarrowLayout} = useResponsiveLayout();
     const listRef = useRef<SelectionListHandle>(null);
@@ -329,6 +333,18 @@ function SearchRouter({onRouterClose, shouldHideInputCaret}: SearchRouterProps) 
         Report.searchInServer(debouncedInputValue.trim());
     }, [debouncedInputValue]);
 
+    const setInitialFocus = useCallback(() => {
+        const initialFocusIndex = (sortedRecentSearches?.slice(0, 5).length ?? 0) + (contextualReportData ? 1 : 0);
+        listRef.current?.setFocusedIndex(initialFocusIndex, false);
+    }, [sortedRecentSearches, contextualReportData]);
+
+    useEffect(() => {
+        if ((!isWeb && !isDesktop) || textInputValue) {
+            return;
+        }
+        setInitialFocus();
+    }, [setInitialFocus, textInputValue, isWeb, isDesktop]);
+
     const onSearchChange = useCallback(
         (userQuery: string) => {
             let newUserQuery = userQuery;
@@ -344,14 +360,16 @@ function SearchRouter({onRouterClose, shouldHideInputCaret}: SearchRouterProps) 
 
             if (newUserQuery || !isEmpty(prevUserQueryRef.current)) {
                 listRef.current?.updateAndScrollToFocusedIndex(0);
-            } else {
+            } else if (!isWeb && !isDesktop) {
                 listRef.current?.updateAndScrollToFocusedIndex(-1);
+            } else {
+                setInitialFocus();
             }
 
             // Store the previous newUserQuery
             prevUserQueryRef.current = newUserQuery;
         },
-        [autocompleteSubstitutions, autocompleteSuggestions, setTextInputValue, updateAutocomplete],
+        [autocompleteSubstitutions, autocompleteSuggestions, setTextInputValue, updateAutocomplete, setInitialFocus, isWeb, isDesktop],
     );
 
     const onSearchSubmit = useCallback(
