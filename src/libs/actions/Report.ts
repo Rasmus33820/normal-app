@@ -3499,10 +3499,11 @@ function prepareOnboardingOptimisticData(
             data = CONST.COMBINED_TRACK_SUBMIT_ONBOARDING_MESSAGES[CONST.ONBOARDING_CHOICES.SUBMIT];
         }
     }
-
+    const isEngagementChoiceManageTeam = engagementChoice === CONST.ONBOARDING_CHOICES.MANAGE_TEAM;
     const integrationName = userReportedIntegration ? CONST.ONBOARDING_ACCOUNTING_MAPPING[userReportedIntegration] : '';
-    const actorAccountID = CONST.ACCOUNT_ID.CONCIERGE;
-    const targetChatReport = ReportUtils.getChatByParticipants([actorAccountID, currentUserAccountID]);
+    const actorAccountID = isEngagementChoiceManageTeam ? CONST.ACCOUNT_ID.QA_GUIDE : CONST.ACCOUNT_ID.CONCIERGE;
+    const adminsChatReport = ReportConnection.getAllReports()?.[`${ONYXKEYS.COLLECTION.REPORT}${adminsChatReportID}`];
+    const targetChatReport = isEngagementChoiceManageTeam ? adminsChatReport : ReportUtils.getChatByParticipants([actorAccountID, currentUserAccountID]);
     const {reportID: targetChatReportID = '', policyID: targetChatPolicyID = ''} = targetChatReport ?? {};
 
     // Text message
@@ -3565,7 +3566,8 @@ function prepareOnboardingOptimisticData(
                 targetChatPolicyID,
                 CONST.REPORT.NOTIFICATION_PREFERENCE.HIDDEN,
             );
-            const taskCreatedAction = ReportUtils.buildOptimisticCreatedReportAction(CONST.EMAIL.CONCIERGE);
+            const emailCreatingAction = engagementChoice === CONST.ONBOARDING_CHOICES.MANAGE_TEAM ? CONST.EMAIL.QA_GUIDE : CONST.EMAIL.CONCIERGE;
+            const taskCreatedAction = ReportUtils.buildOptimisticCreatedReportAction(emailCreatingAction);
             const taskReportAction = ReportUtils.buildOptimisticTaskCommentReportAction(
                 currentTask.reportID,
                 taskTitle,
@@ -3745,6 +3747,7 @@ function prepareOnboardingOptimisticData(
                 lastMentionedTime: DateUtils.getDBTime(),
                 hasOutstandingChildTask,
                 lastVisibleActionCreated,
+                lastActorAccountID: actorAccountID,
             },
         },
         {
@@ -3760,6 +3763,7 @@ function prepareOnboardingOptimisticData(
             value: {choice: engagementChoice},
         },
     );
+
     if (!wasInvited) {
         optimisticData.push({
             onyxMethod: Onyx.METHOD.MERGE,
@@ -3769,6 +3773,7 @@ function prepareOnboardingOptimisticData(
     }
 
     const successData: OnyxUpdate[] = [...tasksForSuccessData];
+
     successData.push({
         onyxMethod: Onyx.METHOD.MERGE,
         key: `${ONYXKEYS.COLLECTION.REPORT_ACTIONS}${targetChatReportID}`,
