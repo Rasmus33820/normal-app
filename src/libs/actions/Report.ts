@@ -4356,6 +4356,9 @@ function exportReportToCSV({reportID, transactionIDList}: ExportReportCSVParams,
 
     fileDownload(ApiUtils.getCommandURL({command: WRITE_COMMANDS.EXPORT_REPORT_TO_CSV}), 'Expensify.csv', '', false, formData, CONST.NETWORK.METHOD.POST, onDownloadFailed);
 }
+function getConciergeReportID() {
+    return conciergeChatReportID;
+}
 
 export type {Video};
 
@@ -4446,4 +4449,5 @@ export {
     updateReportName,
     updateRoomVisibility,
     updateWriteCapability,
+    getConciergeReportID,
 };
